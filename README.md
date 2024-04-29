@@ -3,8 +3,9 @@
 
 An Application that helps Google Team Users to easily analyze and redacts Sensitive data from Documents on Google Docs Powered by Pangea Redact API
 
+To setup Google Docs frontend Codes visit https://devpost.com/software/pangea-documents-redaction-for-google-docs
 
-How To Test the Application Backend:
+# How To Test the Application Backend:
 
 This Application was written in PHP, Bootstraps, Jquery-Ajax, Css etc. leveraging Pangea Redact API
 
