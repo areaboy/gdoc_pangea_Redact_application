@@ -1,0 +1,1 @@
+# gdoc_pangea_Redact_application
