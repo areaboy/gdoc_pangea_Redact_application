@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title> Documents Sensitive Data Redaction</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+  
+ <style>
+  .navbar {
+    margin-bottom: 0;
+    background-color: #800000;
+    z-index: 9999;
+    border: 0;
+    font-size: 12px !important;
+    line-height: 1.42857143 !important;
+    letter-spacing: 4px;
+    border-radius: 0;
+    font-family: Montserrat, sans-serif;
+  }
+  .navbar li a, .navbar .navbar-brand {
+    color: #fff !important;
+  }
+  .navbar-nav li a:hover, .navbar-nav li.active a {
+    color: #800000 !important;
+    background-color: #fff !important;
+  }
+  .navbar-default .navbar-toggle {
+    border-color: ;
+    color: #fff !important;
+  }
+ 
+.imagelogo_li_remove {
+list-style-type: none;
+margin: 0;
+ padding: 0;
+}
+
+.imagelogo_data{
+ width:120px;
+ height:80px;
+}
+
+  .navbar {
+    letter-spacing: 1px;
+    font-size: 14px;
+    border-radius: 0;
+    margin-bottom: 0;
+   background-color:#800000;
+    z-index: 9999;
+    border: 0;
+    font-family: comic sans ms;
+//color:white;
+  }
+
+.navbar-toggle {
+background-color:purple;
+  }
+
+.navgate {
+padding:16px;color:white;
+
+}
+
+
+
+.navgate:hover{
+ color: black;
+ background-color: purple;
+
+}
+
+
+.navbar-header{
+height:60px;
+}
+
+.navbar-header-collapse-color {
+background:white;
+}
+
+/* make modal appear at center of the page */
+.modal-appear-center {
+margin-top: 30%;
+//width:40%;
+}
+
+
+/* make modal appear at center of the page */
+.modal-appear-center1 {
+margin-top: 30%;
+//width:40%;
+}
+
+
+.modal_head_color{
+background-color: #ddd;
+padding: 6px;
+color:black;
+}
+
+
+.modal_footer_color{
+background-color: #ccc;
+padding: 6px;
+color:black;
+}
+
+.upload_progress{
+padding:10px;
+background:green;
+color:white;
+cursor:pointer;
+min-width:30px;
+}
+.upload_progress2{
+padding:10px;
+background:green;
+color:white;
+cursor:pointer;
+min-width:30px;
+}
+  #imageupload_preview
+{
+max-height:200px;
+max-width:200px;
+}
+
+.tab_css{
+cursor:pointer;color:#800000;border-radius:10%;padding:4px;background:#ddd; text-align:center;
+}
+
+
+
+.tab_css:hover{
+ color: black;
+ background-color: orange;
+
+}
+
+
+.data_cssx{
+background:#ddd;
+padding:2px;
+height:auto;
+border:none;
+color:black;
+border-radius:20%;
+font-size:12px;
+text-align:center;
+}
+
+
+.data_cssx:hover{
+background:orange;
+color:black;
+
+}
+
+
+.xcx1{
+background-color: #ddd;
+padding: 2px;
+color:black;
+//font-size:14px;
+border-radius: 10%;
+border: none;
+//cursor: pointer;
+//text-align: center;
+height:130px;
+
+}
+.xcx1:hover {
+background: orange;
+color:white;
+}
+
+  </style>
+
+<script>
+
+//set bakend site url for ajax call to Google Gemini API
+
+var backend_site_url ='https://fredjarsoft.com/pangea_backend/';
+
+// set ajax call loader Image url
+var ajax_loading_image ='https://fredjarsoft.com/pangea_backend/ajax-loader.gif';
+
+
+
+
+// PDF Documents Uploads and Extractions
+
+
+$(document).ready(function(){
+$('#upload_pdf_btn').click(function () {
+var file_fname = $('#file_content').val();
+
+// start if validate
+ if(file_fname==""){
+alert('please Select PDF File to Upload');
+}
+else{
+
+var fname=  $('#file_content').val();
+var ext = fname.split('.').pop();
+//alert(ext);
+
+// add double quotes around the variables
+var fileExtention_quotes = ext;
+fileExtention_quotes = "'"+fileExtention_quotes+"'";
+
+ var allowedtypes = ["pdf", "PDF"];
+    if(allowedtypes.indexOf(ext) !== -1){
+//alert('Good this is a valid Image');
+}else{
+alert("Please Upload a valid PDF Documents");
+return false;
+    }
+
+          var form_data = new FormData();
+          form_data.append('file_content', $('#file_content')[0].files[0]);
+          form_data.append('file_fname', file_fname);
+form_data.append('backend_site_url', backend_site_url);
+form_data.append('ajax_loading_image', ajax_loading_image);
+                    $('.upload_progress').css('width', '0');
+
+                    $('#loader_pdf').fadeIn(400).html('<br><div class="well" style="color:black"><img src=' +ajax_loading_image+ '>&nbsp;Please Wait, Documents File is being Uploaded....</div>');
+                    $.ajax({
+                        url:backend_site_url + 'documents_upload.php',
+                        data: form_data,
+                        processData: false,
+                        contentType: false,
+                        ache: false,
+                        type: 'POST',
+                        xhr: function () {
+                      //var xhr = new window.XMLHttpRequest();
+                            var xhr = $.ajaxSettings.xhr();
+                            xhr.upload.addEventListener("progress", function (event) {
+                                var upload_percent = 0;
+                                var upload_position = event.loaded;
+                                var upload_total  = event.total;
+
+                                if (event.lengthComputable) {
+                                    var upload_percent = upload_position / upload_total;
+                                    upload_percent = parseInt(upload_percent * 100);
+                                  //upload_percent = Math.ceil(upload_position / upload_total * 100);
+                                    $('.upload_progress').css('width', upload_percent + '%');
+                                    $('.upload_progress').text(upload_percent + '%');
+                                }
+                            }, false);
+                            return xhr;
+                        },
+                        success: function (msg) {
+				$('#loader_pdf').hide();
+				$('#result_pdf').html(msg);
+				
+
+
+//strip all html elemnts using jquery
+var html_stripped = jQuery(msg).text();
+//alert(html_stripped);
+
+//check occurrence of word (Successful) from backend output already html stripped.
+var Frombackend = html_stripped;
+var bcount = (Frombackend.match(/Successful/g) || []).length;
+//alert(bcount);
+
+if(bcount > 0){
+$('#file_content').val('');
+}
+
+
+
+
+                        }
+                    });
+} // end if validate
+
+
+
+
+                });
+            });
+
+
+
+
+
+
+// close nav bar on click
+$(document).ready(function(){
+      $(".collapse").on('shown.bs.collapse', function(){
+        $(document).click(function(event) {
+          if (!$(event.target).hasClass("input-default")) {
+              $(".collapse").collapse('hide');
+          }
+        });
+      });
+  });
+
+
+</script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Sensitive Data<br> Redaction</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+
+        <li><a data-toggle='modal' data-target='#myModal_privacy' style='cursor:pointer' title='Security & Privacy' class="navbar-closed">Security & Privacy</a></li>
+ <li><a class="tab1_btn" title=" Documents Sensitive Data Redaction" style='cursor:pointer'> Documents Sensitive Data Redaction</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+<br><br><br>
+
+<br>
+
+
+
+
+
+<div class="row">
+
+    <div class="tab1 well col-sm-12">
+<h4> Documents Sensitive Data Redaction</h4> 
+  
+  <p>
+It uses <b>Pangea Redact API</b> to break down Documents into more <b>Simple, Easy, Understandble and digestable form</b>
+ in order to help <b>Detect, Analyze, extract and safeguard Users sensitive data</b> and control it from getting compromised.
+<br><br>
+
+The Users can then remove detected Sensitive information from documents to prevent data exposure.
+
+</p> 
+<br>
+
+   <div class="form-group">
+<label style="">Select Documents File: </label>
+<input style="background:#c1c1c1;" class="col-sm-12 form-control" type="file" id="file_content" name="file_content" accept="pdf/*" />
+</div><br>
+
+
+<br>
+
+
+ <div class="form-group  col-sm-12">
+                         <div id="up"><div class="upload_progress" style="width:0%">0%</div></div>
+                        <div id="loader_pdf"></div>
+                        <div id="result_pdf"></div>
+                    </div>
+
+                    <input type="button" id="upload_pdf_btn" class="pull-right btn btn-primary" value="Upload PDF Document" />
+<br><br>
+
+<div class='col-sm-12'>.</div>
+
+
+
+</div>
+
+
+
+
+</div>
+<!-- Privacy Modal starts -->
+
+<div class="container">
+ 
+  <!-- Modal -->
+  <div class="modal fade" id="myModal_privacy" role="dialog">
+    <div class="modal-dialog modal-lg modal-appear-center">
+      <div class="modal-content">
+        <div class="modal-header modal_head_color">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Your Data Security & Privacy</h4>
+        </div>
+        <div class="modal-body">
+         
+   <p>  
+
+
+
+<div class='row'>
+
+
+<div class='col-sm-12'>
+
+
+<br><br>
+Your Data is 100% protected. Your Data is processed over https(SSL) and so its encrypted on transist to the server.<br><br>
+
+All Data transmissions are sent through TLS 1.2, adhering to the FIPS 140-2 certification standard. <br><br>
+
+Finally, We do not have access to your Data. Your Data, Files etc. are not cached  nor store anywhere on our Server/Database.
+
+  All Your Data and files are automatically
+deleted from our Server once Google Gemini API finished processing your data on the fly.
+
+</div>
+</div>
+
+
+
+</p>
+        </div>
+        <div class="modal-footer modal_footer_color">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Privacy Modal ends -->
+
+</body>
+</html>
